@@ -1,0 +1,228 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Patrick+Hand&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 39 35% 93%;
+    --foreground: 220 15% 15%;
+
+    --card: 40 30% 96%;
+    --card-foreground: 220 15% 15%;
+
+    --popover: 40 30% 96%;
+    --popover-foreground: 220 15% 15%;
+
+    --primary: 215 45% 40%;
+    --primary-foreground: 40 30% 96%;
+
+    --secondary: 45 50% 85%;
+    --secondary-foreground: 220 15% 15%;
+
+    --muted: 35 20% 88%;
+    --muted-foreground: 220 10% 45%;
+
+    --accent: 45 70% 75%;
+    --accent-foreground: 220 15% 15%;
+
+    --destructive: 0 60% 50%;
+    --destructive-foreground: 40 30% 96%;
+
+    --border: 30 15% 75%;
+    --input: 30 15% 75%;
+    --ring: 215 45% 40%;
+
+    --radius: 0.25rem;
+
+    --sticky-yellow: 50 90% 88%;
+    --sticky-blue: 210 60% 90%;
+    --sticky-green: 140 40% 88%;
+    --sticky-pink: 340 50% 92%;
+
+    --ink: 220 15% 15%;
+    --pencil: 220 10% 40%;
+
+    --sidebar-background: 39 35% 90%;
+    --sidebar-foreground: 220 15% 15%;
+    --sidebar-primary: 215 45% 40%;
+    --sidebar-primary-foreground: 40 30% 96%;
+    --sidebar-accent: 45 70% 75%;
+    --sidebar-accent-foreground: 220 15% 15%;
+    --sidebar-border: 30 15% 75%;
+    --sidebar-ring: 215 45% 40%;
+  }
+
+  .dark {
+    --background: 220 15% 10%;
+    --foreground: 39 35% 90%;
+    --card: 220 15% 13%;
+    --card-foreground: 39 35% 90%;
+    --popover: 220 15% 13%;
+    --popover-foreground: 39 35% 90%;
+    --primary: 215 50% 55%;
+    --primary-foreground: 220 15% 10%;
+    --secondary: 220 15% 18%;
+    --secondary-foreground: 39 35% 90%;
+    --muted: 220 15% 18%;
+    --muted-foreground: 220 10% 60%;
+    --accent: 45 60% 50%;
+    --accent-foreground: 220 15% 10%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 39 35% 90%;
+    --border: 220 15% 22%;
+    --input: 220 15% 22%;
+    --ring: 215 50% 55%;
+    --sidebar-background: 220 15% 10%;
+    --sidebar-foreground: 39 35% 90%;
+    --sidebar-primary: 215 50% 55%;
+    --sidebar-primary-foreground: 220 15% 10%;
+    --sidebar-accent: 220 15% 18%;
+    --sidebar-accent-foreground: 39 35% 90%;
+    --sidebar-border: 220 15% 22%;
+    --sidebar-ring: 215 50% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-hand;
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 24 24'%3E%3Cpath d='M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z' fill='none' stroke='%23333' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='m15 5 4 4' fill='none' stroke='%23333' stroke-width='1.5'/%3E%3C/svg%3E") 2 26, auto;
+  }
+
+  a, button, [role="button"], input, textarea, select {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 24 24'%3E%3Cpath d='M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z' fill='%234a6fa5' stroke='%23333' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='m15 5 4 4' fill='none' stroke='%23333' stroke-width='1.5'/%3E%3C/svg%3E") 2 26, pointer;
+  }
+}
+
+@layer utilities {
+  .sketch-border {
+    border: 2px solid hsl(var(--ink));
+    border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+  }
+
+  .sketch-border-light {
+    border: 1.5px solid hsl(var(--border));
+    border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+  }
+
+  .sticky-note {
+    background: hsl(var(--sticky-yellow));
+    border-radius: 0 0 3px 3px;
+    box-shadow: 
+      2px 3px 8px hsl(var(--ink) / 0.15),
+      inset 0 -2px 4px hsl(var(--ink) / 0.05);
+    transform: rotate(-1deg);
+    position: relative;
+  }
+
+  .sticky-note::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 16px;
+    background: hsl(var(--ink) / 0.08);
+    border-radius: 0 0 2px 2px;
+  }
+
+  .sticky-note-blue {
+    background: hsl(var(--sticky-blue));
+  }
+
+  .sticky-note-green {
+    background: hsl(var(--sticky-green));
+  }
+
+  .sticky-note-pink {
+    background: hsl(var(--sticky-pink));
+  }
+
+  .paper-texture {
+    background-image: 
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 31px,
+        hsl(var(--primary) / 0.06) 31px,
+        hsl(var(--primary) / 0.06) 32px
+      );
+    background-size: 100% 32px;
+  }
+
+  .tape-effect {
+    position: relative;
+  }
+
+  .tape-effect::after {
+    content: '';
+    position: absolute;
+    top: -10px;
+    right: 20px;
+    width: 60px;
+    height: 20px;
+    background: hsl(var(--accent) / 0.5);
+    transform: rotate(3deg);
+    border-radius: 2px;
+  }
+
+  .float-animation {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .float-animation-delayed {
+    animation: float 6s ease-in-out 2s infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(-1deg); }
+    50% { transform: translateY(-8px) rotate(1deg); }
+  }
+
+  @keyframes sketch-draw {
+    from { stroke-dashoffset: 1000; }
+    to { stroke-dashoffset: 0; }
+  }
+
+  .doodle-underline {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='8' viewBox='0 0 200 8'%3E%3Cpath d='M0 6 Q50 0 100 5 Q150 8 200 4' stroke='%234a6fa5' fill='none' stroke-width='2'/%3E%3C/svg%3E");
+    background-repeat: repeat-x;
+    background-position: bottom;
+    background-size: 200px 8px;
+    padding-bottom: 8px;
+  }
+
+  .hand-drawn-arrow {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='20' viewBox='0 0 60 20'%3E%3Cpath d='M0 10 Q15 5 30 10 Q45 15 60 10' stroke='%23333' fill='none' stroke-width='1.5'/%3E%3Cpath d='M52 5 L60 10 L52 15' stroke='%23333' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+  }
+
+  /* Custom Sketchbook Scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+    border-left: 1px dashed hsl(var(--border));
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(var(--pencil) / 0.3);
+    border-radius: 10px;
+    border: 1px solid hsl(var(--pencil) / 0.1);
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--pencil) / 0.5);
+  }
+}
