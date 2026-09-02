@@ -8,6 +8,19 @@ interface Message {
   text: string;
 }
 
+const playTTS = async (text: string) => {
+  try {
+    const response = await axios.post(getApiUrl("/speak/"), { text }, { responseType: "blob" });
+    const blob = response.data;
+    const url = URL.createObjectURL(blob);
+    const audio = new Audio(url);
+    audio.play();
+    audio.onended = () => URL.revokeObjectURL(url);
+  } catch {
+    // TTS unavailable — fail silently
+  }
+};
+
 const renderMessageText = (text: string) => {
   const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
   const parts = [];
@@ -48,7 +61,14 @@ const ChatDemoSection = () => {
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [ttsEnabled, setTtsEnabled] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (ttsEnabled) {
+      playTTS(messages[0].text);
+    }
+  }, []);
 
   useEffect(() => {
     const scrollToBottom = () => {
@@ -79,7 +99,9 @@ const ChatDemoSection = () => {
         history: messages
       });
 
-      setMessages(prev => [...prev, { role: "ai", text: response.data.answer }]);
+      const answer = response.data.answer;
+      setMessages(prev => [...prev, { role: "ai", text: answer }]);
+      if (ttsEnabled) playTTS(answer);
     } catch (error) {
       setMessages(prev => [...prev, { role: "ai", text: "Sorry, I'm having trouble connecting to my brain right now. Please make sure the backend server is running!" }]);
     } finally {
@@ -100,7 +122,14 @@ const ChatDemoSection = () => {
             <div className="flex items-center gap-2 pb-2 md:pb-3 border-b border-ink/10">
               <span className="text-xl md:text-2xl">👨‍💻</span>
               <span className="font-hand text-lg md:text-xl font-semibold">Talk to Rinzan (AI)</span>
-              <span className="ml-auto w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-primary" />
+              <button
+                onClick={() => setTtsEnabled(v => !v)}
+                className="ml-auto text-lg hover:scale-110 transition-transform"
+                title={ttsEnabled ? "Mute voice" : "Enable voice"}
+              >
+                {ttsEnabled ? "🔊" : "🔇"}
+              </button>
+              <span className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-primary" />
             </div>
 
             <div className="space-y-4 h-[350px] md:h-[450px] overflow-y-auto pr-2 custom-scrollbar" ref={scrollRef}>

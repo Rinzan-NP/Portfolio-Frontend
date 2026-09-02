@@ -5,11 +5,12 @@ import { Menu, X } from "lucide-react";
 
 const navItems = [
     { label: "Home", href: "/" },
-    { label: "Chat", href: "/chat" },
     { label: "Skills", href: "/#skills" },
     { label: "Tech", href: "/#tech" },
+    { label: "Services", href: "/#services" },
+    { label: "Projects", href: "/#projects" },
     { label: "About", href: "/#about" },
-    { label: "Contact", href: "/contact" },
+    { label: "Contact", href: "/#contact" },
 ];
 
 const NotepadNav = () => {
@@ -29,7 +30,11 @@ const NotepadNav = () => {
         setIsMenuOpen(false);
         if (href.startsWith("/#") && location.pathname === "/") {
             const id = href.replace("/#", "");
-            document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+            if (id === "contact") {
+                window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+            } else {
+                document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+            }
         }
     };
 
@@ -62,12 +67,9 @@ const NotepadNav = () => {
                                 <Link
                                     to={item.href}
                                     onClick={() => handleNavClick(item.href)}
-                                    className="font-hand text-xl text-foreground hover:text-primary transition-colors relative group"
+                                    className="font-hand text-xl text-foreground hover:text-primary transition-colors"
                                 >
                                     {item.label}
-                                    <span className={`absolute -bottom-1 left-0 h-0.5 bg-primary transition-all duration-300 ${(location.pathname === item.href || (item.href.startsWith("/#") && location.pathname === "/"))
-                                            ? "w-full" : "w-0 group-hover:w-full"
-                                        }`} />
                                 </Link>
                             </li>
                         ))}

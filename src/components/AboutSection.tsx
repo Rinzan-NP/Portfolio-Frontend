@@ -71,7 +71,7 @@ const AboutSection = () => {
           </SketchReveal>
 
           <div className="flex-1 space-y-12 w-full">
-            <div>
+            <div id="experience">
               <h3 className="font-hand text-3xl font-bold mb-6 text-primary underline underline-offset-4">Experience</h3>
               <div className="space-y-8 pl-4 border-l-2 border-border/50">
                 {experience.map((item, i) => (
@@ -88,7 +88,7 @@ const AboutSection = () => {
               </div>
             </div>
 
-            <div>
+            <div id="education">
               <h3 className="font-hand text-3xl font-bold mb-6 text-primary underline underline-offset-4">Education</h3>
               <div className="space-y-8 pl-4 border-l-2 border-border/50">
                 {education.map((item, i) => (

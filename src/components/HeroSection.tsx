@@ -1,10 +1,10 @@
-import { useNavigate } from "react-router-dom";
 import aiBrainDoodle from "@/assets/ai-brain-doodle.png";
 import SketchReveal from "./SketchReveal";
 import { motion } from "framer-motion";
+import { useChat } from "@/store/ChatContext";
 
 const HeroSection = () => {
-  const navigate = useNavigate();
+  const { openChat } = useChat();
 
   return (
     <section className="min-h-screen flex items-center justify-center px-4 py-20 paper-texture relative overflow-hidden">
@@ -14,16 +14,22 @@ const HeroSection = () => {
         <div className="flex-1 space-y-6">
           <SketchReveal variant="sticky" delay={0.1}>
             <div className="inline-block sticky-note px-4 py-1 text-sm font-mono mb-2">
-              📌 Rinzan's Portfolio v2.0
+              📌 Rinzan's Portfolio 
             </div>
           </SketchReveal>
 
           <SketchReveal variant="pencil" delay={0.3}>
             <h1 className="text-4xl md:text-7xl font-hand font-bold leading-tight text-foreground">
               Rinzan N P<br />
-              <span className="doodle-underline text-primary">AI Systems</span>
-              <br />
-              Architect
+              <span className="font-mono text-lg md:text-2xl">
+                <span className="text-muted-foreground">› </span>
+                <span className="text-primary">AI</span>
+                <span className="text-foreground">_</span>
+                <span className="text-secondary">Systems</span>
+                <span className="text-foreground">_</span>
+                <span className="text-muted-foreground">Architect</span>
+                <span className="animate-pulse text-primary">▋</span>
+              </span>
             </h1>
           </SketchReveal>
 
@@ -36,7 +42,7 @@ const HeroSection = () => {
           <SketchReveal variant="sketch" delay={0.7}>
             <button
               className="sketch-border bg-primary text-primary-foreground px-6 md:px-8 py-3 text-lg md:text-xl font-hand font-semibold hover:scale-105 transition-transform active:scale-95"
-              onClick={() => navigate("/chat")}
+              onClick={openChat}
             >
               ✏️ Chat with My Career
             </button>

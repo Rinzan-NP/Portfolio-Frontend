@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import ChatPage from "./pages/ChatPage";
 import ContactPage from "./pages/ContactPage";
 import NotFound from "./pages/NotFound";
+import { ChatProvider } from "@/store/ChatContext";
 
 const queryClient = new QueryClient();
 
@@ -15,15 +16,17 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/chat" element={<ChatPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <ChatProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/chat" element={<ChatPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </ChatProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
