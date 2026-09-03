@@ -11,10 +11,10 @@ const techStack = [
 
 const TechStackSection = () => {
   return (
-    <section id="tech" className="py-20 px-4">
+    <section id="skills" className="py-20 px-4">
       <div className="container max-w-5xl mx-auto">
         <SketchReveal variant="pencil">
-          <h2 className="text-4xl md:text-5xl font-hand font-bold text-center mb-4">🧰 Tech Stack</h2>
+          <h2 className="text-4xl md:text-5xl font-hand font-bold text-center mb-4">🧰 Skills & Tech Stack</h2>
           <p className="text-center font-sketch text-muted-foreground mb-12 text-lg">~ index cards from my digital desk ~</p>
         </SketchReveal>
 

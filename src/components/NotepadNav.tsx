@@ -4,12 +4,10 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 
 const navItems = [
-    { label: "Home", href: "/" },
-    { label: "Skills", href: "/#skills" },
-    { label: "Tech", href: "/#tech" },
-    { label: "Services", href: "/#services" },
-    { label: "Projects", href: "/#projects" },
     { label: "About", href: "/#about" },
+    { label: "Skills", href: "/#skills" },
+    { label: "Projects", href: "/#projects" },
+    { label: "Experience", href: "/#experience" },
     { label: "Contact", href: "/#contact" },
 ];
 
@@ -31,9 +29,20 @@ const NotepadNav = () => {
         if (href.startsWith("/#") && location.pathname === "/") {
             const id = href.replace("/#", "");
             if (id === "contact") {
-                window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+                if (window.lenis) {
+                    window.lenis.scrollTo(document.body.scrollHeight, { duration: 1.4 });
+                } else {
+                    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+                }
             } else {
-                document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+                const element = document.getElementById(id);
+                if (element) {
+                    if (window.lenis) {
+                        window.lenis.scrollTo(element, { offset: -85, duration: 1.25 });
+                    } else {
+                        element.scrollIntoView({ behavior: "smooth" });
+                    }
+                }
             }
         }
     };

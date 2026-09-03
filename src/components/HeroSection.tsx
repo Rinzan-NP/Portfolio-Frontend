@@ -1,55 +1,126 @@
-import aiBrainDoodle from "@/assets/ai-brain-doodle.png";
-import SketchReveal from "./SketchReveal";
-import { motion } from "framer-motion";
+import React, { useState, useEffect } from "react";
+import PencilWrittenTitle from "./PencilWrittenTitle";
+import HeroAgentBlueprint from "./HeroAgentBlueprint";
+import { motion, AnimatePresence } from "framer-motion";
 import { useChat } from "@/store/ChatContext";
+
+const TypewriterRole: React.FC<{ onComplete?: () => void }> = ({ onComplete }) => {
+  const fullText = "AI_Systems_Architect";
+  const [displayed, setDisplayed] = useState("");
+
+  useEffect(() => {
+    let idx = 0;
+    const interval = setInterval(() => {
+      idx++;
+      setDisplayed(fullText.slice(0, idx));
+      if (idx >= fullText.length) {
+        clearInterval(interval);
+        if (onComplete) onComplete();
+      }
+    }, 40);
+    return () => clearInterval(interval);
+  }, [onComplete]);
+
+  // Format parts with custom highlighting
+  return (
+    <span className="font-mono text-lg md:text-2xl inline-block mt-2 font-medium">
+      <span className="text-muted-foreground/70">› </span>
+      <span className="text-primary font-bold">
+        {displayed.slice(0, 2)}
+      </span>
+      <span className="text-muted-foreground/60">
+        {displayed.length > 2 ? "_" : ""}
+      </span>
+      <span className="text-amber-700 dark:text-amber-400 font-bold">
+        {displayed.slice(3, 10)}
+      </span>
+      <span className="text-muted-foreground/60">
+        {displayed.length > 10 ? "_" : ""}
+      </span>
+      <span className="text-foreground font-bold">
+        {displayed.slice(11)}
+      </span>
+      <span className="animate-pulse text-primary ml-0.5 font-bold">▋</span>
+    </span>
+  );
+};
 
 const HeroSection = () => {
   const { openChat } = useChat();
+  const [isTitleDrawn, setIsTitleDrawn] = useState(false);
 
   return (
     <section className="min-h-screen flex items-center justify-center px-4 py-20 paper-texture relative overflow-hidden">
       <div className="absolute left-16 md:left-24 top-0 bottom-0 w-px bg-destructive/20" />
 
-      <div className="container max-w-5xl mx-auto flex flex-col lg:flex-row items-center gap-12">
+      <div className="container max-w-5xl mx-auto flex flex-col lg:flex-row items-center gap-12 lg:gap-14">
+        {/* Left Column: Headline & Intro */}
         <div className="flex-1 space-y-6">
-          <SketchReveal variant="sticky" delay={0.1}>
-            <div className="inline-block sticky-note px-4 py-1 text-sm font-mono mb-2">
-              📌 Rinzan's Portfolio 
+          {/* Top Pin Tag */}
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            <div className="inline-block sticky-note px-4 py-1.5 text-sm font-mono mb-2 cursor-pointer select-none">
+              📌 Rinzan's Portfolio
             </div>
-          </SketchReveal>
+          </motion.div>
 
-          <SketchReveal variant="pencil" delay={0.3}>
-            <h1 className="text-4xl md:text-7xl font-hand font-bold leading-tight text-foreground">
-              Rinzan N P<br />
-              <span className="font-mono text-lg md:text-2xl">
-                <span className="text-muted-foreground">› </span>
-                <span className="text-primary">AI</span>
-                <span className="text-foreground">_</span>
-                <span className="text-secondary">Systems</span>
-                <span className="text-foreground">_</span>
-                <span className="text-muted-foreground">Architect</span>
-                <span className="animate-pulse text-primary">▋</span>
-              </span>
+          {/* Title with Pencil Drawing Animation */}
+          <div>
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-hand font-bold leading-tight text-foreground">
+              <PencilWrittenTitle
+                delay={0.2}
+                onWritingComplete={() => setIsTitleDrawn(true)}
+              />
+              <br />
+              <AnimatePresence>
+                {isTitleDrawn && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, ease: "easeOut" }}
+                  >
+                    <TypewriterRole />
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </h1>
-          </SketchReveal>
+          </div>
 
-          <SketchReveal variant="pencil" delay={0.5}>
-            <p className="text-lg md:text-2xl font-sketch text-muted-foreground max-w-lg">
+          {/* Description Paragraph: Flows in smoothly after title */}
+          <motion.div
+            initial={{ opacity: 0, y: 14 }}
+            animate={isTitleDrawn ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
+            transition={{ duration: 0.65, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <p className="text-lg md:text-2xl font-sketch text-muted-foreground max-w-lg leading-relaxed">
               Expert in building RAG, LLM Agents, and scalable AI microservices with 2+ years of experience.
             </p>
-          </SketchReveal>
+          </motion.div>
 
-          <SketchReveal variant="sketch" delay={0.7}>
+          {/* Action Button: Flows in smoothly */}
+          <motion.div
+            initial={{ opacity: 0, y: 14, scale: 0.95 }}
+            animate={isTitleDrawn ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 14, scale: 0.95 }}
+            transition={{ duration: 0.6, delay: 0.55, ease: [0.22, 1, 0.36, 1] }}
+          >
             <button
-              className="sketch-border bg-primary text-primary-foreground px-6 md:px-8 py-3 text-lg md:text-xl font-hand font-semibold hover:scale-105 transition-transform active:scale-95"
+              className="sketch-border bg-primary text-primary-foreground px-6 md:px-8 py-3 text-lg md:text-xl font-hand font-semibold hover:scale-105 transition-transform active:scale-95 shadow-md"
               onClick={openChat}
             >
               ✏️ Chat with My Career
             </button>
-          </SketchReveal>
+          </motion.div>
 
-          <SketchReveal variant="sketch" delay={0.9}>
-            <div className="flex flex-wrap gap-2 md:gap-4 pt-4">
+          {/* Social / Portfolio Links: Flows in smoothly */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={isTitleDrawn ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
+            transition={{ duration: 0.6, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <div className="flex flex-wrap gap-2 md:gap-4 pt-2">
               {[
                 { label: "Resume", href: "/Rinzan_Resume.pdf" },
                 { label: "LinkedIn", href: "https://www.linkedin.com/in/rinzan-np-477154284/" },
@@ -59,32 +130,28 @@ const HeroSection = () => {
                 <a
                   key={link.label}
                   href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="sketch-border-light px-2 md:px-3 py-1 text-xs md:sm font-mono text-pencil hover:bg-primary/10 transition-colors"
+                  target={link.href.startsWith("http") ? "_blank" : undefined}
+                  rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                  className="hand-drawn-border px-3 py-1 font-mono text-xs md:text-sm hover:bg-pencil-hover transition-colors"
                 >
                   #{link.label.toLowerCase()}
                 </a>
               ))}
             </div>
-          </SketchReveal>
+          </motion.div>
         </div>
 
-        <SketchReveal variant="pop" delay={0.4} className="flex-shrink-0">
+        {/* Right Column: Interactive RAG Pipeline Architecture Blueprint Card */}
+        <div className="flex-1 flex justify-center w-full">
           <motion.div
-            animate={{ y: [0, -8, 0], rotate: [-1, 1, -1] }}
-            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-            className="relative"
+            initial={{ opacity: 0, y: 20, scale: 0.96 }}
+            animate={isTitleDrawn ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 20, scale: 0.96 }}
+            transition={{ duration: 0.8, delay: 0.45, ease: [0.22, 1, 0.36, 1] }}
+            className="w-full flex justify-center"
           >
-            <img src={aiBrainDoodle} alt="AI network doodle illustration" className="w-48 h-48 md:w-80 md:h-80 opacity-80 object-contain" />
-            <div className="hidden sm:block absolute -top-4 -right-4 font-hand text-sm text-primary rotate-12">
-              Llama 3 Powered! →
-            </div>
-            <div className="hidden sm:block absolute -bottom-2 left-4 font-hand text-sm text-pencil -rotate-6">
-              ← ChromaDB Vector Memory
-            </div>
+            <HeroAgentBlueprint />
           </motion.div>
-        </SketchReveal>
+        </div>
       </div>
     </section>
   );

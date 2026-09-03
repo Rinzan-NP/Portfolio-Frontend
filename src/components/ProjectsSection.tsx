@@ -49,7 +49,7 @@ const ProjectsSection = () => {
                 <p className="font-sketch text-sm text-foreground mb-5 leading-relaxed">{project.desc}</p>
                 <div className="flex flex-wrap gap-2">
                   {project.tags.map(tag => (
-                    <span key={tag} className="font-mono text-xs px-2 py-0.5 bg-background/60 border border-ink/10">
+                    <span key={tag} className="font-mono text-xs px-2.5 py-1 bg-background/70 border border-ink/15 rounded-sm hover:bg-primary/15 hover:border-primary/40 hover:scale-105 transition-all cursor-default select-none">
                       {tag}
                     </span>
                   ))}

@@ -20,14 +20,14 @@ const SkillsSection = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6 md:gap-y-8">
                     {skills.map((skill, i) => (
                         <SketchReveal key={skill.name} variant="pencil" delay={i * 0.1}>
-                            <div className="space-y-2">
-                                <div className="flex justify-between font-hand text-xl">
+                            <div className="space-y-2 group p-2.5 rounded-lg hover:bg-card/60 transition-all hover:-translate-y-0.5 cursor-pointer select-none">
+                                <div className="flex justify-between font-hand text-xl group-hover:text-primary transition-colors">
                                     <span>{skill.name}</span>
-                                    <span className="text-sm font-sketch text-primary">{skill.level}</span>
+                                    <span className="text-sm font-sketch text-primary font-semibold group-hover:scale-110 transition-transform">{skill.level}</span>
                                 </div>
-                                <div className="h-4 sketch-border relative overflow-hidden bg-card/50">
+                                <div className="h-4 sketch-border relative overflow-hidden bg-card/50 group-hover:shadow-md transition-shadow">
                                     <div
-                                        className="absolute inset-y-0 left-0 bg-primary/20"
+                                        className="absolute inset-y-0 left-0 bg-primary/25 group-hover:bg-primary/35 transition-colors"
                                         style={{
                                             width: skill.level,
                                             backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(0,0,0,0.05) 5px, rgba(0,0,0,0.05) 10px)'

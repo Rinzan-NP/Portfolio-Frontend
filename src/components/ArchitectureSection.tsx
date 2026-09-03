@@ -22,7 +22,7 @@ const ArchitectureSection = () => {
           {steps.map((step, i) => (
             <div key={step.label} className="flex items-center">
               <SketchReveal variant="pop" delay={i * 0.15}>
-                <div className="sketch-border bg-card p-4 text-center min-w-[120px] hover:scale-105 transition-transform">
+                <div className="sketch-border bg-card p-4 text-center min-w-[120px] hover:-translate-y-2 hover:scale-105 hover:shadow-xl hover:border-primary transition-all cursor-pointer select-none">
                   <div className="text-3xl mb-1">{step.emoji}</div>
                   <div className="font-hand text-xl font-bold text-foreground">{step.label}</div>
                   <div className="font-mono text-xs text-pencil mt-1">{step.note}</div>
@@ -42,7 +42,7 @@ const ArchitectureSection = () => {
           {steps.map((step, i) => (
             <div key={step.label} className="flex flex-col items-center">
               <SketchReveal variant="pop" delay={i * 0.1}>
-                <div className="sketch-border bg-card p-4 text-center w-full max-w-[200px] hover:scale-105 transition-transform">
+                <div className="sketch-border bg-card p-4 text-center w-full max-w-[200px] hover:-translate-y-1 hover:scale-105 hover:shadow-lg hover:border-primary transition-all cursor-pointer select-none">
                   <div className="text-3xl mb-1">{step.emoji}</div>
                   <div className="font-hand text-xl font-bold text-foreground">{step.label}</div>
                   <div className="font-mono text-xs text-pencil mt-1">{step.note}</div>

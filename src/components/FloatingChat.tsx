@@ -52,7 +52,15 @@ const playTTSSentence = async (text: string, ttsEnabled: boolean) => {
   if (!_ttsPlaying) playNextTTS(ttsEnabled);
 };
 
-const renderMessageText = (text: string) => {
+const cleanChatText = (raw: string) => {
+  return raw
+    .replace(/^data:\s*/gm, "")
+    .replace(/\[SECTION:\w+\]/g, "")
+    .trimStart();
+};
+
+const renderMessageText = (rawText: string) => {
+  const text = cleanChatText(rawText);
   const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
   const parts = [];
   let lastIndex = 0;
@@ -87,7 +95,7 @@ const renderMessageText = (text: string) => {
 };
 
 const FloatingChat = () => {
-  const { isOpen, toggleChat } = useChat();
+  const { isOpen, toggleChat, isAiReady } = useChat();
   const [messages, setMessages] = useState<Message[]>([
     { role: "ai", text: "Hey, I'm Rinzan's AI version. Ask me anything about him!" }
   ]);
@@ -98,10 +106,10 @@ const FloatingChat = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (ttsEnabled && messages.length === 1) {
+    if (isAiReady && ttsEnabled && messages.length === 1) {
       playTTSSentence(messages[0].text, ttsEnabled);
     }
-  }, []);
+  }, [isAiReady, ttsEnabled]);
 
   useEffect(() => {
     if (isOpen && scrollRef.current) {
@@ -110,9 +118,10 @@ const FloatingChat = () => {
         behavior: "smooth"
       });
     }
-  }, [messages, isLoading, isOpen, streamingText]);
+  }, [isOpen, messages, streamingText]);
 
-  const handleSend = async () => {
+  const handleSend = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     if (!input.trim() || isLoading) return;
 
     const userQuery = input.trim();
@@ -120,16 +129,10 @@ const FloatingChat = () => {
     setIsLoading(true);
     setStreamingText("");
 
-    try {
-      // Add user message and get correct ai msg index in one update
-      const { msgIndex } = await new Promise<{ msgIndex: number }>(resolve => {
-        setMessages(prev => {
-          const aiMsgIdx = prev.length + 1;
-          resolve({ msgIndex: aiMsgIdx });
-          return [...prev, { role: "user", text: userQuery }, { role: "ai", text: "" }];
-        });
-      });
+    // Add only user message initially
+    setMessages(prev => [...prev, { role: "user", text: userQuery }]);
 
+    try {
       const response = await fetch(getApiUrl("/query/stream"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -142,6 +145,7 @@ const FloatingChat = () => {
       const decoder = new TextDecoder();
       let fullText = "";
       let wordBuffer = "";
+      let hasAddedAiBubble = false;
 
       while (true) {
         const { done, value } = await reader.read();
@@ -152,36 +156,55 @@ const FloatingChat = () => {
 
         for (const line of lines) {
           if (line.startsWith("data: ")) {
-            const data = line.slice(6);
+            let data = line.slice(6);
             if (data === "[DONE]") continue;
-            // Handle section highlight events
-            const sectionMatch = data.match(/^\[SECTION:(\w+)\]$/);
-            if (sectionMatch) {
-              window.dispatchEvent(new CustomEvent("rinzan:highlight-section", { detail: { section: sectionMatch[1] } }));
-              continue;
+
+            // Extract section tags
+            const sectionMatches = data.match(/\[SECTION:(\w+)\]/g);
+            if (sectionMatches) {
+              for (const matchStr of sectionMatches) {
+                const sec = matchStr.replace("[SECTION:", "").replace("]", "");
+                window.dispatchEvent(
+                  new CustomEvent("rinzan:highlight-section", { detail: { section: sec } })
+                );
+              }
+              data = data.replace(/\[SECTION:\w+\]/g, "");
             }
+
+            data = data.replace(/^data:\s*/, "");
+            if (!data) continue;
+
             fullText += data;
             wordBuffer += data;
-            setStreamingText(fullText);
-            // Update the streaming message at the correct index
+            const cleanDisplay = cleanChatText(fullText);
+            setStreamingText(cleanDisplay);
+
+            // Add or update the AI message bubble once text starts streaming
             setMessages(prev => {
+              if (!hasAddedAiBubble) {
+                hasAddedAiBubble = true;
+                return [...prev, { role: "ai", text: cleanDisplay }];
+              }
               const updated = [...prev];
-              updated[msgIndex] = { role: "ai", text: fullText };
+              updated[updated.length - 1] = { role: "ai", text: cleanDisplay };
               return updated;
             });
+
             // TTS each sentence as it completes
             const sentenceMatch = wordBuffer.match(/^[^.!?]*[.!?]+/);
             if (sentenceMatch) {
-              const sentence = sentenceMatch[0];
-              wordBuffer = wordBuffer.slice(sentence.length);
-              playTTSSentence(sentence, ttsEnabled);
+              const sentence = cleanChatText(sentenceMatch[0]);
+              wordBuffer = wordBuffer.slice(sentenceMatch[0].length);
+              if (sentence.trim()) {
+                playTTSSentence(sentence, ttsEnabled);
+              }
             }
           }
         }
       }
 
-      // Stream complete — TTS any remaining text
-      if (ttsEnabled && wordBuffer.trim()) playTTSSentence(wordBuffer, ttsEnabled);
+      const cleanRemaining = cleanChatText(wordBuffer);
+      if (ttsEnabled && cleanRemaining.trim()) playTTSSentence(cleanRemaining, ttsEnabled);
     } catch {
       setMessages(prev => [...prev, { role: "ai", text: "Oops, can't reach the brain right now. Make sure the backend's running!" }]);
     } finally {
@@ -229,20 +252,25 @@ const FloatingChat = () => {
 
               {/* Messages */}
               <div className="space-y-3 flex-1 overflow-y-auto pr-2 custom-scrollbar" ref={scrollRef}>
-                {messages.map((msg, i) => (
-                  <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                    <div className={`max-w-[85%] p-3 font-sketch text-sm leading-relaxed ${msg.role === "user"
-                      ? "sketch-border bg-card text-card-foreground"
-                      : "sketch-border-light bg-sticky-yellow/50 text-foreground"
-                      }`}>
-                      <p className="whitespace-pre-wrap">{renderMessageText(msg.text)}</p>
+                {messages.map((msg, i) => {
+                  const cleanText = cleanChatText(msg.text);
+                  if (!cleanText) return null;
+                  return (
+                    <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+                      <div className={`max-w-[85%] p-3 font-sketch text-sm leading-relaxed ${msg.role === "user"
+                        ? "sketch-border bg-card text-card-foreground"
+                        : "sketch-border-light bg-sticky-yellow/50 text-foreground"
+                        }`}>
+                        <p className="whitespace-pre-wrap">{renderMessageText(cleanText)}</p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
                 {isLoading && !streamingText && (
                   <div className="flex justify-start">
-                    <div className="max-w-[85%] p-3 font-sketch text-sm leading-relaxed sketch-border-light bg-sticky-yellow/30 text-muted-foreground italic">
-                      Thinking... ✏️
+                    <div className="max-w-[85%] p-3 font-sketch text-sm leading-relaxed sketch-border-light bg-sticky-yellow/40 text-muted-foreground italic flex items-center gap-2 shadow-sm animate-pulse">
+                      <span>Thinking...</span>
+                      <span className="text-base animate-bounce">✏️</span>
                     </div>
                   </div>
                 )}

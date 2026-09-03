@@ -1,42 +1,26 @@
 import HeroSection from "@/components/HeroSection";
-import SkillsSection from "@/components/SkillsSection";
-import TechStackSection from "@/components/TechStackSection";
-import ServicesSection from "@/components/ServicesSection";
-import ProjectsSection from "@/components/ProjectsSection";
 import AboutSection from "@/components/AboutSection";
+import TechStackSection from "@/components/TechStackSection";
+import ProjectsSection from "@/components/ProjectsSection";
+import ExperienceSection from "@/components/ExperienceSection";
 import ContactSection from "@/components/ContactSection";
 import NotepadNav from "@/components/NotepadNav";
 import FloatingChat from "@/components/FloatingChat";
+import PencilPointerGuide from "@/components/PencilPointerGuide";
 
 import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
 
 const sectionMap: Record<string, string> = {
   about: "about",
-  experience: "experience",
-  education: "education",
   skills: "skills",
+  tech: "skills",
   projects: "projects",
-  services: "services",
-  tech: "tech",
+  experience: "experience",
   contact: "contact",
 };
 
 const Index = () => {
-  const { hash } = useLocation();
-
-  useEffect(() => {
-    if (hash) {
-      const id = hash.replace("#", "");
-      const element = document.getElementById(id);
-      if (element) {
-        setTimeout(() => {
-          element.scrollIntoView({ behavior: "smooth" });
-        }, 100);
-      }
-    }
-  }, [hash]);
-
+  // Listen for AI assistant deep-link highlight events
   useEffect(() => {
     const handler = (e: Event) => {
       const section = (e as CustomEvent<{ section: string }>).detail.section;
@@ -44,7 +28,11 @@ const Index = () => {
       if (!id) return;
       const el = document.getElementById(id);
       if (!el) return;
-      el.scrollIntoView({ behavior: "smooth", block: "center" });
+      if (window.lenis) {
+        window.lenis.scrollTo(el, { offset: -85, duration: 1.25 });
+      } else {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
       // Flash highlight
       el.classList.add("ring-4", "ring-primary", "ring-offset-4");
       setTimeout(() => el.classList.remove("ring-4", "ring-primary", "ring-offset-4"), 1200);
@@ -54,14 +42,14 @@ const Index = () => {
   }, []);
 
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen relative">
       <NotepadNav />
+      <PencilPointerGuide />
       <HeroSection />
-      <SkillsSection />
-      <TechStackSection />
-      <ServicesSection />
-      <ProjectsSection />
       <AboutSection />
+      <TechStackSection />
+      <ProjectsSection />
+      <ExperienceSection />
       <ContactSection />
 
       {/* Footer */}
