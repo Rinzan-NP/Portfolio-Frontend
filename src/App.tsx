@@ -9,6 +9,7 @@ import ContactPage from "./pages/ContactPage";
 import NotFound from "./pages/NotFound";
 import { ChatProvider } from "@/store/ChatContext";
 import SmoothScroll from "@/components/SmoothScroll";
+import { Analytics } from "@vercel/analytics/react";
 
 const queryClient = new QueryClient();
 
@@ -17,6 +18,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
+      <Analytics />
       <ChatProvider>
         <SmoothScroll>
           <BrowserRouter>
@@ -35,3 +37,4 @@ const App = () => (
 );
 
 export default App;
+
