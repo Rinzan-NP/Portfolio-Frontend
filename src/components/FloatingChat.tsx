@@ -229,13 +229,46 @@ const FloatingChat = () => {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            transition={{ duration: 0.2 }}
+            initial={{
+              opacity: 0,
+              scale: 0.15,
+              rotateX: 65,
+              rotateZ: -12,
+              skewX: 4,
+              y: 50,
+              transformOrigin: "bottom right",
+            }}
+            animate={{
+              opacity: 1,
+              scale: 1,
+              rotateX: 0,
+              rotateZ: 0,
+              skewX: 0,
+              y: 0,
+              transition: {
+                type: "spring",
+                damping: 18,
+                stiffness: 220,
+                mass: 0.8,
+              },
+            }}
+            exit={{
+              opacity: 0,
+              scale: 0.1,
+              rotateX: 75,
+              rotateZ: 8,
+              skewX: -6,
+              y: 40,
+              transformOrigin: "bottom right",
+              transition: {
+                duration: 0.22,
+                ease: "easeInOut",
+              },
+            }}
+            style={{ perspective: 1200 }}
             className="fixed bottom-24 right-6 z-50 w-[90vw] max-w-md max-h-[70vh] flex flex-col"
           >
-            <div className="sticky-note sticky-note-blue p-4 md:p-6 flex flex-col max-h-[70vh]">
+            <div className="sticky-note sticky-note-blue p-4 md:p-6 flex flex-col max-h-[70vh] shadow-2xl">
               {/* Header */}
               <div className="flex items-center gap-2 pb-3 border-b border-ink/10 mb-3">
                 <span className="text-xl">👨‍💻</span>
