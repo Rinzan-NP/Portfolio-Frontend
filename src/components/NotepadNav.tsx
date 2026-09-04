@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
+import { trackEvent } from "@/lib/analytics";
 
 const navItems = [
     { label: "About", href: "/#about" },
@@ -24,8 +25,10 @@ const NotepadNav = () => {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-    const handleNavClick = (href: string) => {
+    const handleNavClick = (href: string, label?: string) => {
+        trackEvent("nav_click", { target: label || href, location: "notepad_navbar" });
         setIsMenuOpen(false);
+
         if (href.startsWith("/#") && location.pathname === "/") {
             const id = href.replace("/#", "");
             if (id === "contact") {
@@ -75,7 +78,7 @@ const NotepadNav = () => {
                             <li key={item.label}>
                                 <Link
                                     to={item.href}
-                                    onClick={() => handleNavClick(item.href)}
+                                    onClick={() => handleNavClick(item.href, item.label)}
                                     className="font-hand text-xl text-foreground hover:text-primary transition-colors"
                                 >
                                     {item.label}
@@ -107,7 +110,7 @@ const NotepadNav = () => {
                                     <li key={item.label}>
                                         <Link
                                             to={item.href}
-                                            onClick={() => handleNavClick(item.href)}
+                                            onClick={() => handleNavClick(item.href, item.label)}
                                             className="block font-hand text-2xl text-foreground py-2 border-b border-ink/5"
                                         >
                                             {item.label}

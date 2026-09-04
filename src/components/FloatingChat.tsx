@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { getApiUrl } from "@/lib/api";
 import { X, MessageCircle } from "lucide-react";
 import { useChat } from "@/store/ChatContext";
+import { trackEvent } from "@/lib/analytics";
 
 interface Message {
   role: "user" | "ai";
@@ -129,6 +130,8 @@ const FloatingChat = () => {
     setIsLoading(true);
     setStreamingText("");
 
+    trackEvent("chat_message_sent", { location: "floating_chat" });
+
     // Add only user message initially
     setMessages(prev => [...prev, { role: "user", text: userQuery }]);
 
@@ -220,10 +223,14 @@ const FloatingChat = () => {
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-sticky-yellow sketch-border shadow-lg flex items-center justify-center hover:scale-110 transition-transform"
-        onClick={toggleChat}
+        onClick={() => {
+          trackEvent("chat_toggle", { action: !isOpen ? "open" : "close" });
+          toggleChat();
+        }}
       >
         {isOpen ? <X size={24} /> : <MessageCircle size={24} />}
       </motion.button>
+
 
       {/* Chat Overlay */}
       <AnimatePresence>

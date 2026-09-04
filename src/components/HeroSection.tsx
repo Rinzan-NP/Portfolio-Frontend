@@ -3,6 +3,7 @@ import PencilWrittenTitle from "./PencilWrittenTitle";
 import HeroAgentBlueprint from "./HeroAgentBlueprint";
 import { motion, AnimatePresence } from "framer-motion";
 import { useChat } from "@/store/ChatContext";
+import { trackEvent } from "@/lib/analytics";
 
 const TypewriterRole: React.FC<{ onComplete?: () => void }> = ({ onComplete }) => {
   const fullText = "AI_Systems_Architect";
@@ -108,7 +109,10 @@ const HeroSection = () => {
           >
             <button
               className="sketch-border bg-primary text-primary-foreground px-6 md:px-8 py-3 text-lg md:text-xl font-hand font-semibold hover:scale-105 transition-transform active:scale-95 shadow-md"
-              onClick={openChat}
+              onClick={() => {
+                trackEvent("chat_open", { location: "hero_cta" });
+                openChat();
+              }}
             >
               ✏️ Chat with My Career
             </button>
@@ -122,16 +126,17 @@ const HeroSection = () => {
           >
             <div className="flex flex-wrap gap-2 md:gap-4 pt-2">
               {[
-                { label: "Resume", href: "/Rinzan_Resume.pdf" },
-                { label: "LinkedIn", href: "https://www.linkedin.com/in/rinzan-np-477154284/" },
-                { label: "GitHub", href: "https://github.com/Rinzan-NP" },
-                { label: "Instagram", href: "https://www.instagram.com/_rinzan_np_/" }
+                { label: "Resume", href: "/Rinzan_Resume.pdf", event: "resume_download" },
+                { label: "LinkedIn", href: "https://www.linkedin.com/in/rinzan-np-477154284/", event: "linkedin_click" },
+                { label: "GitHub", href: "https://github.com/Rinzan-NP", event: "github_click" },
+                { label: "Instagram", href: "https://www.instagram.com/_rinzan_np_/", event: "instagram_click" }
               ].map((link) => (
                 <a
                   key={link.label}
                   href={link.href}
                   target={link.href.startsWith("http") ? "_blank" : undefined}
                   rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                  onClick={() => trackEvent(link.event, { location: "hero_social_bar" })}
                   className="hand-drawn-border px-3 py-1 font-mono text-xs md:text-sm hover:bg-pencil-hover transition-colors"
                 >
                   #{link.label.toLowerCase()}

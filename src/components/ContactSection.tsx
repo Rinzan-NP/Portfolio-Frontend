@@ -5,6 +5,7 @@ import { getApiUrl } from "@/lib/api";
 import { useChat } from "@/store/ChatContext";
 import { toast } from "sonner";
 import { Mail, Send, ExternalLink, MessageSquare, MapPin, Sparkles } from "lucide-react";
+import { trackEvent } from "@/lib/analytics";
 
 export const ContactSection = () => {
   const { openChat } = useChat();
@@ -25,6 +26,7 @@ export const ContactSection = () => {
     e.preventDefault();
     if (isLoading) return;
 
+    trackEvent("contact_form_submit", { method: "airmail_form" });
     const senderEmail = formData.email;
     setIsLoading(true);
     try {
@@ -187,6 +189,7 @@ export const ContactSection = () => {
                     href={gmailComposeUrl}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => trackEvent("email_click", { method: "gmail", location: "contact_section" })}
                     className="w-full hand-drawn-border py-2.5 px-4 bg-primary text-primary-foreground hover:bg-primary/90 font-hand text-lg font-bold flex items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95 shadow-sm"
                   >
                     <span>📧 Open in Gmail</span>
@@ -195,6 +198,7 @@ export const ContactSection = () => {
 
                   <a
                     href={mailtoUrl}
+                    onClick={() => trackEvent("email_click", { method: "mailto", location: "contact_section" })}
                     className="w-full sketch-border-light py-2 px-4 bg-background/70 hover:bg-card text-foreground font-mono text-xs font-semibold flex items-center justify-center gap-2 transition-all hover:scale-102"
                   >
                     <span>📬 Default Mail App ({emailAddress})</span>
@@ -220,7 +224,10 @@ export const ContactSection = () => {
                 </p>
 
                 <button
-                  onClick={openChat}
+                  onClick={() => {
+                    trackEvent("chat_open", { location: "contact_section" });
+                    openChat();
+                  }}
                   className="w-full hand-drawn-border py-2.5 px-4 bg-background/80 hover:bg-primary/20 text-foreground font-hand text-lg font-bold flex items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95"
                 >
                   <MessageSquare className="w-4 h-4 text-primary" />
@@ -238,6 +245,7 @@ export const ContactSection = () => {
                     href="https://www.linkedin.com/in/rinzan-np-477154284/"
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => trackEvent("linkedin_click", { location: "contact_section" })}
                     className="p-2 bg-background/70 rounded sketch-border-light hover:bg-primary/15 hover:scale-105 transition-all text-center group font-mono text-xs font-semibold flex items-center justify-center gap-1.5"
                   >
                     <span>💼 LinkedIn</span>
@@ -248,6 +256,7 @@ export const ContactSection = () => {
                     href="https://github.com/Rinzan-NP"
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => trackEvent("github_click", { location: "contact_section" })}
                     className="p-2 bg-background/70 rounded sketch-border-light hover:bg-primary/15 hover:scale-105 transition-all text-center group font-mono text-xs font-semibold flex items-center justify-center gap-1.5"
                   >
                     <span>🐙 GitHub</span>
